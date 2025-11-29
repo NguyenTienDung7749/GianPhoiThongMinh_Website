@@ -1,0 +1,13 @@
+/* index.css – chỉ giữ những thứ chung chung */
+:root {
+  font-family: system-ui, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+}
