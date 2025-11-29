@@ -5,6 +5,9 @@ import { auth } from "../firebase";
 
 const AuthContext = createContext(null);
 
+// Check if we're in demo mode (no Firebase config)
+const isDemoMode = !import.meta.env.VITE_FIREBASE_DATABASE_URL;
+
 // eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const context = useContext(AuthContext);
@@ -15,10 +18,15 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(isDemoMode ? { email: "demo@example.com" } : null);
+  const [loading, setLoading] = useState(!isDemoMode);
 
   useEffect(() => {
+    // Skip auth listener in demo mode
+    if (isDemoMode || !auth) {
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
@@ -28,7 +36,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading }}>
+    <AuthContext.Provider value={{ user, loading, isDemoMode }}>
       {children}
     </AuthContext.Provider>
   );
