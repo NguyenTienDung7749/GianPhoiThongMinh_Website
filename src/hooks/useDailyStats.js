@@ -1,6 +1,6 @@
 // src/hooks/useDailyStats.js
 import { useMemo } from "react";
-import { calcDryingTime, getDaySpanSec, groupLogsByDay } from "../utils/calcDuration";
+import { calcDryingTime, calcRetractTime, groupLogsByDay } from "../utils/calcDuration";
 import { isSameDay } from "../utils/formatTime";
 
 /**
@@ -20,10 +20,9 @@ export function useDailyStats(logs) {
       return isSameDay(d, now);
     });
     
-    // Thống kê hôm nay
+    // Thống kê hôm nay - tính đúng từ logs
     const dryingTodaySec = calcDryingTime(logsToday, nowSec);
-    const todaySpanSec = getDaySpanSec(now, now);
-    const inTodaySec = Math.max(todaySpanSec - dryingTodaySec, 0);
+    const inTodaySec = calcRetractTime(logsToday, nowSec);
     
     const todayStats = {
       dryingSec: dryingTodaySec,
@@ -43,8 +42,7 @@ export function useDailyStats(logs) {
         
         const d = new Date(list[0].ts * 1000);
         const drySec = calcDryingTime(list, nowSec);
-        const spanSec = getDaySpanSec(d, now);
-        const inSec = Math.max(spanSec - drySec, 0);
+        const inSec = calcRetractTime(list, nowSec);
         
         return {
           key,
