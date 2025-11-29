@@ -1,6 +1,6 @@
 // src/components/FireButton.jsx
 
-export function FireButton({ children, onClick, disabled = false, variant = "primary", icon }) {
+export function FireButton({ children, onClick, disabled = false, variant = "primary", icon, loading = false }) {
   const variants = {
     primary: `
       bg-gradient-to-r from-lava-red to-lava-orange
@@ -38,24 +38,41 @@ export function FireButton({ children, onClick, disabled = false, variant = "pri
   return (
     <button
       onClick={onClick}
-      disabled={disabled}
+      disabled={disabled || loading}
       className={`
         relative overflow-hidden
         px-6 py-3 rounded-xl
         font-semibold text-sm uppercase tracking-wider
         transition-all duration-300
         transform active:scale-95
-        ${disabled ? disabledClass : variants[variant]}
+        ${disabled || loading ? disabledClass : variants[variant]}
         flex items-center justify-center gap-2
+        btn-molten btn-boil
       `}
     >
       {/* Fire glow effect */}
-      {!disabled && (
+      {!disabled && !loading && (
         <div className="absolute inset-0 bg-gradient-to-t from-transparent to-white/10 opacity-0 hover:opacity-100 transition-opacity"></div>
       )}
       
-      {icon && <span className="text-lg">{icon}</span>}
-      <span className="relative z-10">{children}</span>
+      {/* Molten glow overlay on hover */}
+      {!disabled && !loading && (
+        <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300">
+          <div className="absolute inset-0 bg-gradient-radial from-lava-yellow/20 to-transparent animate-molten-glow"></div>
+        </div>
+      )}
+      
+      {loading ? (
+        <>
+          <span className="fire-loading-spinner text-lg">🔥</span>
+          <span className="relative z-10">Đang xử lý...</span>
+        </>
+      ) : (
+        <>
+          {icon && <span className="text-lg">{icon}</span>}
+          <span className="relative z-10">{children}</span>
+        </>
+      )}
     </button>
   );
 }

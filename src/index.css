@@ -19,6 +19,9 @@
   --animate-pulse-lava: pulse-lava 2s ease-in-out infinite;
   --animate-flicker: flicker 0.5s ease-in-out infinite;
   --animate-glow: glow 2s ease-in-out infinite;
+  --animate-ember-float: ember-float 4s ease-in-out infinite;
+  --animate-molten-glow: molten-glow 1.5s ease-in-out infinite;
+  --animate-boil: boil 0.8s ease-in-out infinite;
 
   @keyframes pulse-lava {
     0%, 100% { box-shadow: 0 0 20px rgba(255, 34, 0, 0.5); }
@@ -33,6 +36,41 @@
   @keyframes glow {
     0%, 100% { text-shadow: 0 0 10px rgba(255, 34, 0, 0.8); }
     50% { text-shadow: 0 0 20px rgba(255, 85, 0, 1); }
+  }
+
+  @keyframes ember-float {
+    0%, 100% { 
+      transform: translateY(0) scale(1);
+      opacity: 0.6;
+    }
+    50% { 
+      transform: translateY(-8px) scale(1.1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes molten-glow {
+    0%, 100% { 
+      box-shadow: 0 0 15px rgba(255, 85, 0, 0.5), 0 0 30px rgba(255, 34, 0, 0.3);
+    }
+    50% { 
+      box-shadow: 0 0 25px rgba(255, 174, 0, 0.7), 0 0 50px rgba(255, 85, 0, 0.5);
+    }
+  }
+
+  @keyframes boil {
+    0%, 100% { 
+      transform: scale(1);
+    }
+    25% { 
+      transform: scale(1.02) translateY(-1px);
+    }
+    50% { 
+      transform: scale(0.98);
+    }
+    75% { 
+      transform: scale(1.01) translateY(1px);
+    }
   }
 }
 
@@ -452,4 +490,207 @@
   background: linear-gradient(135deg, rgba(255, 34, 0, 0.5), rgba(255, 85, 0, 0.5));
   box-shadow: 0 0 15px rgba(255, 85, 0, 0.4);
   color: var(--color-lava-yellow);
+}
+
+/* ========== EMBER PARTICLES FLOATING EFFECT ========== */
+.ember-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: radial-gradient(circle, var(--color-lava-yellow) 0%, var(--color-lava-orange) 50%, transparent 100%);
+  border-radius: 50%;
+  animation: ember-float 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.ember-particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+.ember-particle:nth-child(2) { left: 30%; animation-delay: 0.8s; }
+.ember-particle:nth-child(3) { left: 50%; animation-delay: 1.6s; }
+.ember-particle:nth-child(4) { left: 70%; animation-delay: 2.4s; }
+.ember-particle:nth-child(5) { left: 90%; animation-delay: 3.2s; }
+
+@keyframes ember-rise {
+  0% {
+    transform: translateY(100%) scale(0.5);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.8;
+  }
+  80% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-100%) scale(0.2);
+    opacity: 0;
+  }
+}
+
+/* ========== MOLTEN METAL BUTTON HOVER EFFECT ========== */
+.btn-molten {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.btn-molten::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 174, 0, 0.4) 0%,
+    rgba(255, 85, 0, 0.2) 30%,
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.btn-molten:hover::before {
+  opacity: 1;
+  animation: molten-pulse 1s ease-in-out infinite;
+}
+
+@keyframes molten-pulse {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(5deg);
+  }
+}
+
+/* ========== DROPDOWN BOILING ANIMATION ========== */
+.dropdown-boil {
+  position: relative;
+}
+
+.dropdown-boil::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-lava-red) 25%,
+    var(--color-lava-orange) 50%,
+    var(--color-lava-red) 75%,
+    transparent 100%
+  );
+  animation: boil-wave 2s ease-in-out infinite;
+}
+
+@keyframes boil-wave {
+  0%, 100% {
+    background-position: 0% 50%;
+    transform: scaleY(1);
+  }
+  50% {
+    background-position: 100% 50%;
+    transform: scaleY(1.5);
+  }
+}
+
+/* ========== CARD GLOW PULSE ENHANCEMENT ========== */
+.card-ember-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-ember-glow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 50% 100%,
+    rgba(255, 85, 0, 0.15) 0%,
+    transparent 70%
+  );
+  animation: ember-pulse 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes ember-pulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+/* ========== SMOOTH LAVA FLOW TRANSITIONS ========== */
+.lava-transition {
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.lava-transition:hover {
+  transform: translateY(-2px);
+}
+
+/* ========== FIRE SPINNER FOR LOADING STATE ========== */
+.fire-loading-spinner {
+  display: inline-block;
+  animation: fire-spin-glow 1s linear infinite;
+}
+
+@keyframes fire-spin-glow {
+  0% {
+    transform: rotate(0deg);
+    filter: drop-shadow(0 0 5px rgba(255, 85, 0, 0.8));
+  }
+  50% {
+    filter: drop-shadow(0 0 15px rgba(255, 174, 0, 1));
+  }
+  100% {
+    transform: rotate(360deg);
+    filter: drop-shadow(0 0 5px rgba(255, 85, 0, 0.8));
+  }
+}
+
+/* ========== BUTTON BOILING/BUBBLING HOVER ========== */
+.btn-boil:hover {
+  animation: boil 0.8s ease-in-out infinite;
+}
+
+.btn-boil::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 20% 80%,
+    rgba(255, 174, 0, 0.3) 0%,
+    transparent 30%
+  ),
+  radial-gradient(
+    circle at 80% 20%,
+    rgba(255, 85, 0, 0.3) 0%,
+    transparent 30%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.btn-boil:hover::after {
+  opacity: 1;
+  animation: bubble-move 1.5s ease-in-out infinite;
+}
+
+@keyframes bubble-move {
+  0%, 100% {
+    background-position: 0% 100%, 100% 0%;
+  }
+  50% {
+    background-position: 100% 0%, 0% 100%;
+  }
 }

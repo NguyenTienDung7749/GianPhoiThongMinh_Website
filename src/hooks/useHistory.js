@@ -44,29 +44,38 @@ export function useHistory(limit = 500) {
     }
 
     // Real Firebase mode
-    import("firebase/database").then(({ ref, onValue, query, orderByKey, limitToLast }) => {
-      import("../firebase/config").then(({ db }) => {
-        const logsRef = query(ref(db, "logs"), orderByKey(), limitToLast(limit));
-        
-        const unsubscribe = onValue(logsRef, (snapshot) => {
-          if (!snapshot.exists()) {
-            setLogs([]);
-            setLoading(false);
-            return;
-          }
-          
-          const obj = snapshot.val();
-          const arr = Object.keys(obj)
-            .map((k) => ({ id: k, ...obj[k] }))
-            .sort((a, b) => (a.ts || 0) - (b.ts || 0));
-          
-          setLogs(arr);
-          setLoading(false);
-        });
+    let isMounted = true;
+    let unsubscribe = null;
 
-        return () => unsubscribe();
+    Promise.all([
+      import("firebase/database"),
+      import("../firebase/config")
+    ]).then(([{ ref, onValue, query, orderByKey, limitToLast }, { db }]) => {
+      if (!isMounted) return;
+      
+      const logsRef = query(ref(db, "logs"), orderByKey(), limitToLast(limit));
+      
+      unsubscribe = onValue(logsRef, (snapshot) => {
+        if (!snapshot.exists()) {
+          setLogs([]);
+          setLoading(false);
+          return;
+        }
+        
+        const obj = snapshot.val();
+        const arr = Object.keys(obj)
+          .map((k) => ({ id: k, ...obj[k] }))
+          .sort((a, b) => (a.ts || 0) - (b.ts || 0));
+        
+        setLogs(arr);
+        setLoading(false);
       });
     });
+
+    return () => {
+      isMounted = false;
+      if (unsubscribe) unsubscribe();
+    };
   }, [limit]);
 
   return { logs, loading };
