@@ -21,7 +21,8 @@ export function Login() {
       const email = `${username.trim().toLowerCase()}@system.local`;
       await signInWithEmailAndPassword(auth, email, password);
       navigate("/");
-    } catch {
+    } catch (error) {
+      console.error("Login error:", error);
       setError("Sai tên đăng nhập hoặc mật khẩu");
     } finally {
       setLoading(false);

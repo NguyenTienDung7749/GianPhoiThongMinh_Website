@@ -1,7 +1,7 @@
 // src/components/AuthGuard.jsx
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import LoadingHellfire from "./LoadingHellfire";
+import { LoadingHellfire } from "./LoadingHellfire";
 
 export function AuthGuard({ children }) {
   const { user, loading } = useAuth();
