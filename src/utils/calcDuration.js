@@ -32,6 +32,36 @@ export function calcDryingTime(logList, nowSec) {
 }
 
 /**
+ * Tính tổng thời gian thu (IN) trong danh sách log
+ * @param {Array} logList - Danh sách log
+ * @param {number} nowSec - Thời gian hiện tại (giây)
+ * @returns {number} Tổng thời gian thu (giây)
+ */
+export function calcRetractTime(logList, nowSec) {
+  if (!logList || logList.length === 0) return 0;
+  
+  let total = 0;
+  let lastIn = null;
+  
+  logList.forEach((log) => {
+    if (!log.ts) return;
+    if (log.state === "in") {
+      lastIn = log.ts;
+    } else if (log.state === "out" && lastIn) {
+      total += log.ts - lastIn;
+      lastIn = null;
+    }
+  });
+  
+  // Nếu hiện tại vẫn đang IN thì cộng thêm
+  if (lastIn) {
+    total += nowSec - lastIn;
+  }
+  
+  return total;
+}
+
+/**
  * Tính span của một ngày (giây)
  * @param {Date} dateObj - Ngày cần tính
  * @param {Date} now - Thời điểm hiện tại

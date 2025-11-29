@@ -10,7 +10,7 @@ export function Navbar() {
     }`;
 
   return (
-    <nav className="bg-hell-black/95 backdrop-blur-sm border-b border-lava-red/30 sticky top-0 z-50">
+    <nav className="bg-hell-black/95 backdrop-blur-sm border-b border-lava-red/30 sticky top-0 z-50 card-lava-glow">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}

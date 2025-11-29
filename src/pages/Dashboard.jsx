@@ -104,7 +104,7 @@ export function Dashboard() {
           <span className="text-2xl">⚙️</span> Điều Khiển Hệ Thống
         </h2>
         
-        <div className="bg-gradient-to-br from-hell-blood to-hell-black rounded-xl border-2 border-lava-red/30 p-6 shadow-lava">
+        <div className="bg-gradient-to-br from-hell-blood to-hell-black rounded-xl border-2 border-lava-red/30 p-6 shadow-lava card-lava-glow">
           {/* Status badges */}
           <div className="flex flex-wrap gap-3 mb-6">
             <span className={`
@@ -186,7 +186,7 @@ export function Dashboard() {
         </h2>
         
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-gradient-to-br from-lava-red/20 to-hell-blood rounded-xl border border-lava-red/30 p-5 shadow-lava">
+          <div className="bg-gradient-to-br from-lava-red/20 to-hell-blood rounded-xl border border-lava-red/30 p-5 shadow-lava card-lava-glow">
             <div className="flex items-center gap-3 mb-2">
               <span className="text-2xl">☀️</span>
               <span className="text-lava-orange/80 text-sm uppercase tracking-wider">Thời gian phơi</span>
@@ -196,7 +196,7 @@ export function Dashboard() {
             </p>
           </div>
 
-          <div className="bg-gradient-to-br from-green-900/20 to-hell-blood rounded-xl border border-green-700/30 p-5">
+          <div className="bg-gradient-to-br from-green-900/20 to-hell-blood rounded-xl border border-green-700/30 p-5 card-lava-glow">
             <div className="flex items-center gap-3 mb-2">
               <span className="text-2xl">🏠</span>
               <span className="text-green-400/80 text-sm uppercase tracking-wider">Thời gian thu</span>
@@ -206,7 +206,7 @@ export function Dashboard() {
             </p>
           </div>
 
-          <div className="bg-gradient-to-br from-lava-orange/20 to-hell-blood rounded-xl border border-lava-orange/30 p-5">
+          <div className="bg-gradient-to-br from-lava-orange/20 to-hell-blood rounded-xl border border-lava-orange/30 p-5 card-lava-glow">
             <div className="flex items-center gap-3 mb-2">
               <span className="text-2xl">🔄</span>
               <span className="text-lava-orange/80 text-sm uppercase tracking-wider">Số lần chuyển</span>
