@@ -1,6 +1,7 @@
 // src/firebase.js 
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
+import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -17,3 +18,6 @@ export const app = initializeApp(firebaseConfig);
 
 // Realtime Database
 export const db = getDatabase(app);
+
+// Firebase Auth
+export const auth = getAuth(app);
