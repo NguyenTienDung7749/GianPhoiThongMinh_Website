@@ -20,8 +20,7 @@ export function listenStatus(callback) {
   const unsubscribeSystem = onValue(systemRef, (snapshot) => {
     if (snapshot.exists()) {
       const data = snapshot.val();
-      // eslint-disable-next-line no-unused-vars
-      const { sensor, ...rest } = data;
+      const { sensor: _sensor, ...rest } = data;
       callback(prev => ({ ...prev, ...rest }));
     }
   });

@@ -32,33 +32,41 @@ export function useRealtimeStatus() {
     }
 
     // Real Firebase mode
-    import("firebase/database").then(({ ref, onValue }) => {
-      import("../firebase/config").then(({ db }) => {
-        // Lắng nghe sensor
-        const sensorRef = ref(db, "system/sensor");
-        const unsubscribeSensor = onValue(sensorRef, (snapshot) => {
-          if (snapshot.exists()) {
-            setSensor(snapshot.val());
-          }
-          setLoading(false);
-        });
+    let isMounted = true;
+    let unsubscribeSensor = null;
+    let unsubscribeSystem = null;
+    
+    Promise.all([
+      import("firebase/database"),
+      import("../firebase/config")
+    ]).then(([{ ref, onValue }, { db }]) => {
+      if (!isMounted) return;
+      
+      // Lắng nghe sensor
+      const sensorRef = ref(db, "system/sensor");
+      unsubscribeSensor = onValue(sensorRef, (snapshot) => {
+        if (snapshot.exists()) {
+          setSensor(snapshot.val());
+        }
+        setLoading(false);
+      });
 
-        // Lắng nghe system (mode, state, command)
-        const systemRef = ref(db, "system");
-        const unsubscribeSystem = onValue(systemRef, (snapshot) => {
-          if (snapshot.exists()) {
-            const data = snapshot.val();
-            delete data.sensor;
-            setSystem((prev) => ({ ...prev, ...data }));
-          }
-        });
-
-        return () => {
-          unsubscribeSensor();
-          unsubscribeSystem();
-        };
+      // Lắng nghe system (mode, state, command)
+      const systemRef = ref(db, "system");
+      unsubscribeSystem = onValue(systemRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          delete data.sensor;
+          setSystem((prev) => ({ ...prev, ...data }));
+        }
       });
     });
+
+    return () => {
+      isMounted = false;
+      if (unsubscribeSensor) unsubscribeSensor();
+      if (unsubscribeSystem) unsubscribeSystem();
+    };
   }, []);
 
   return { sensor, system, loading, isDemoMode };

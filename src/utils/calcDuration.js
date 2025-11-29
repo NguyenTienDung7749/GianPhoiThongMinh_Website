@@ -1,5 +1,5 @@
 // src/utils/calcDuration.js
-import { isSameDay } from "./formatTime";
+import { isSameDay, getDateKey } from "./formatTime";
 
 /**
  * Tính tổng thời gian phơi (OUT) trong danh sách log
@@ -82,7 +82,7 @@ export function groupLogsByDay(logs) {
   logs.forEach((log) => {
     if (!log.ts) return;
     const d = new Date(log.ts * 1000);
-    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    const key = getDateKey(d);
     if (!grouped[key]) grouped[key] = [];
     grouped[key].push(log);
   });
