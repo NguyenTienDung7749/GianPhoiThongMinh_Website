@@ -1,13 +1,101 @@
-/* index.css – chỉ giữ những thứ chung chung */
-:root {
-  font-family: system-ui, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* src/index.css - Volcanic Hellfire TailwindCSS Styles */
+@import "tailwindcss";
+
+/* ========== THEME CONFIGURATION ========== */
+@theme {
+  /* Volcanic Hellfire Colors */
+  --color-lava-red: #ff2200;
+  --color-lava-orange: #ff5500;
+  --color-lava-yellow: #ffae00;
+  --color-hell-black: #0a0a0a;
+  --color-hell-blood: #1a0000;
+
+  /* Box Shadows */
+  --shadow-lava: 0 0 20px rgba(255, 34, 0, 0.5);
+  --shadow-fire: 0 0 30px rgba(255, 85, 0, 0.6);
+  --shadow-lava-lg: 0 0 40px rgba(255, 34, 0, 0.7);
+
+  /* Animations */
+  --animate-pulse-lava: pulse-lava 2s ease-in-out infinite;
+  --animate-flicker: flicker 0.5s ease-in-out infinite;
+  --animate-glow: glow 2s ease-in-out infinite;
+
+  @keyframes pulse-lava {
+    0%, 100% { box-shadow: 0 0 20px rgba(255, 34, 0, 0.5); }
+    50% { box-shadow: 0 0 40px rgba(255, 85, 0, 0.8); }
+  }
+
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+  }
+
+  @keyframes glow {
+    0%, 100% { text-shadow: 0 0 10px rgba(255, 34, 0, 0.8); }
+    50% { text-shadow: 0 0 20px rgba(255, 85, 0, 1); }
+  }
 }
 
-body {
-  margin: 0;
+/* ========== BASE STYLES ========== */
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-hell-black);
+    color: var(--color-lava-yellow);
+    min-height: 100vh;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-hell-black);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 34, 0, 0.5);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 85, 0, 0.7);
+  }
+
+  /* Selection color */
+  ::selection {
+    background: rgba(255, 34, 0, 0.5);
+    color: var(--color-lava-yellow);
+  }
+}
+
+/* ========== UTILITY STYLES ========== */
+@layer utilities {
+  /* Text glow effect */
+  .text-glow {
+    text-shadow: 0 0 10px rgba(255, 34, 0, 0.8),
+      0 0 20px rgba(255, 85, 0, 0.6),
+      0 0 30px rgba(255, 174, 0, 0.4);
+  }
+
+  /* Box glow effect */
+  .box-glow {
+    box-shadow: 0 0 20px rgba(255, 34, 0, 0.5),
+      0 0 40px rgba(255, 85, 0, 0.3),
+      0 0 60px rgba(255, 174, 0, 0.1);
+  }
 }
