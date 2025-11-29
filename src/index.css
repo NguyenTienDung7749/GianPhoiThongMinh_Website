@@ -127,10 +127,10 @@
   width: 200%;
   height: 200%;
   background: 
-    radial-gradient(ellipse at 20% 80%, rgba(255, 34, 0, 0.3) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(255, 85, 0, 0.2) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 50%, rgba(255, 174, 0, 0.15) 0%, transparent 60%);
-  animation: lava-flow 15s ease-in-out infinite;
+    radial-gradient(ellipse at 20% 80%, rgba(255, 34, 0, 0.4) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(255, 85, 0, 0.3) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(255, 174, 0, 0.2) 0%, transparent 60%);
+  animation: lava-flow 12s ease-in-out infinite;
 }
 
 @keyframes lava-flow {
@@ -149,6 +149,65 @@
   75% {
     transform: translateX(-5%) translateY(-2%) scale(1.02);
     opacity: 1;
+  }
+}
+
+/* ========== FIRE PARTICLE EFFECTS ========== */
+.fire-particles {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.fire-particle {
+  position: absolute;
+  font-size: 1.2rem;
+  opacity: 0;
+  animation: float-up 4s ease-out infinite;
+}
+
+.fire-particle:nth-child(1) {
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.fire-particle:nth-child(2) {
+  left: 25%;
+  animation-delay: 0.8s;
+}
+
+.fire-particle:nth-child(3) {
+  left: 45%;
+  animation-delay: 1.6s;
+}
+
+.fire-particle:nth-child(4) {
+  left: 65%;
+  animation-delay: 2.4s;
+}
+
+.fire-particle:nth-child(5) {
+  left: 85%;
+  animation-delay: 3.2s;
+}
+
+@keyframes float-up {
+  0% {
+    transform: translateY(100vh) scale(0.5) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(-20vh) scale(1) rotate(15deg);
+    opacity: 0;
   }
 }
 

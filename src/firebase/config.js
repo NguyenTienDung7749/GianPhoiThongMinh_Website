@@ -2,6 +2,9 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
 
+// Check if Firebase config is available
+const isDemoMode = !import.meta.env.VITE_FIREBASE_DATABASE_URL;
+
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -12,8 +15,13 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-// Khởi tạo Firebase
-export const app = initializeApp(firebaseConfig);
+// Khởi tạo Firebase chỉ khi có config
+let app = null;
+let db = null;
 
-// Realtime Database
-export const db = getDatabase(app);
+if (!isDemoMode) {
+  app = initializeApp(firebaseConfig);
+  db = getDatabase(app);
+}
+
+export { app, db };
