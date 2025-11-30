@@ -16,15 +16,23 @@ export function StatusCard({ icon, label, value, unit, variant = "default" }) {
         transition-all duration-300
         hover:shadow-fire hover:scale-[1.02]
         animate-pulse-lava
+        card-ember-glow lava-transition
       `}
     >
       {/* Glow effect background */}
       <div className="absolute inset-0 bg-gradient-to-br from-lava-red/5 to-transparent opacity-50"></div>
       
+      {/* Ember particles background */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="ember-particle" style={{ top: '80%' }}></div>
+        <div className="ember-particle" style={{ top: '70%' }}></div>
+        <div className="ember-particle" style={{ top: '85%' }}></div>
+      </div>
+      
       {/* Content */}
       <div className="relative z-10">
         <div className="flex items-center space-x-3 mb-2">
-          <span className="text-2xl">{icon}</span>
+          <span className="text-2xl animate-ember-float">{icon}</span>
           <span className="text-lava-orange/80 text-sm font-medium uppercase tracking-wider">
             {label}
           </span>
@@ -42,6 +50,9 @@ export function StatusCard({ icon, label, value, unit, variant = "default" }) {
 
       {/* Lava crack effect */}
       <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-lava-red to-transparent opacity-50"></div>
+      
+      {/* Enhanced bottom glow */}
+      <div className="absolute bottom-0 left-1/4 right-1/4 h-2 bg-gradient-to-t from-lava-orange/30 to-transparent blur-sm"></div>
     </div>
   );
 }

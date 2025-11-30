@@ -1,6 +1,7 @@
 // src/firebase/config.js
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
+import { getAuth } from "firebase/auth";
 
 // Check if Firebase config is available
 const isDemoMode = !import.meta.env.VITE_FIREBASE_DATABASE_URL;
@@ -18,10 +19,12 @@ const firebaseConfig = {
 // Khởi tạo Firebase chỉ khi có config
 let app = null;
 let db = null;
+let auth = null;
 
 if (!isDemoMode) {
   app = initializeApp(firebaseConfig);
   db = getDatabase(app);
+  auth = getAuth(app);
 }
 
-export { app, db };
+export { app, db, auth };
