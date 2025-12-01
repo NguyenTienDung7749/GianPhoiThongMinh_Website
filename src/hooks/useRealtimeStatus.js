@@ -4,6 +4,9 @@ import { useState, useEffect, useCallback } from "react";
 // Check if we're in demo mode (no Firebase config)
 const isDemoMode = !import.meta.env.VITE_FIREBASE_DATABASE_URL;
 
+// ESP32 offline detection timeout in milliseconds
+const ESP32_OFFLINE_TIMEOUT_MS = 10000;
+
 /**
  * Hook lấy trạng thái realtime từ Firebase
  * @returns {Object} { sensor, system, loading, isDemoMode, esp32Status }
@@ -94,7 +97,7 @@ export function useRealtimeStatus() {
           return { ...prev, online: false };
         }
         const timeSinceLastUpdate = Date.now() - prev.lastUpdateAt;
-        const isOnline = timeSinceLastUpdate <= 10000; // 10 seconds timeout
+        const isOnline = timeSinceLastUpdate <= ESP32_OFFLINE_TIMEOUT_MS;
         return { ...prev, online: isOnline };
       });
     }, 1000);

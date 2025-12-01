@@ -1,8 +1,14 @@
 // src/hooks/useCommandTracking.js
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 
-// Command timeout: 8 seconds
+// Command timeout in milliseconds (8 seconds)
 const COMMAND_TIMEOUT_MS = 8000;
+
+// Number of recent logs to check for command confirmation
+const RECENT_LOGS_COUNT = 5;
+
+// Time buffer for log timestamp comparison (accounts for slight timing differences)
+const LOG_TIME_BUFFER_MS = 1000;
 
 /**
  * Hook to track command execution and detect timeouts
@@ -102,21 +108,21 @@ export function useCommandTracking(system, logs = []) {
     // Check logs for confirmation
     if (!isConfirmed && logs.length > 0) {
       const expectedReason = commandToReason[pendingCommand.type];
-      const recentLogs = logs.slice(-5);
+      const recentLogs = logs.slice(-RECENT_LOGS_COUNT);
       
       isConfirmed = recentLogs.some((log) => {
         const logTime = log.ts ? log.ts * 1000 : 0;
-        return log.reason === expectedReason && logTime >= pendingCommand.sentAt - 1000;
+        return log.reason === expectedReason && logTime >= pendingCommand.sentAt - LOG_TIME_BUFFER_MS;
       });
     }
 
     // Mark as confirmed using ref to avoid re-render loop
+    // Use queueMicrotask to defer state update and avoid cascading renders
     if (isConfirmed && !commandConfirmedRef.current) {
       commandConfirmedRef.current = true;
-      // Use setTimeout(0) to defer state update and avoid cascading renders
-      setTimeout(() => {
+      queueMicrotask(() => {
         clearPendingCommand();
-      }, 0);
+      });
     }
     
     previousStateRef.current = system?.state;

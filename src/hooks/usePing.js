@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 // Check if we're in demo mode (no Firebase config)
 const isDemoMode = !import.meta.env.VITE_FIREBASE_DATABASE_URL;
 
-// Ping interval: 25 seconds (between 20-30 as requested)
+// Ping interval in milliseconds (25 seconds)
 const PING_INTERVAL_MS = 25000;
 
 /**
