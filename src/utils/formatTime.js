@@ -7,13 +7,23 @@
 const GMT7_OFFSET_MS = 7 * 60 * 60 * 1000;
 
 /**
- * Get Date object adjusted to GMT+7 timezone
+ * Get Date object adjusted to GMT+7 timezone for date extraction purposes.
+ * 
+ * This function shifts the timestamp forward by 7 hours so that when using
+ * getUTC*() methods, you get the date/time components as they would appear
+ * in GMT+7 timezone. This is a common pattern for timezone-aware date handling.
+ * 
+ * Example: Unix timestamp 1733040000 (Dec 1, 2024 08:00 UTC / Dec 1, 2024 15:00 GMT+7)
+ * - After adding GMT7_OFFSET_MS: represents Dec 1, 2024 15:00 UTC
+ * - getUTCDate() returns 1 (correct day in GMT+7)
+ * - getUTCHours() returns 15 (correct hour in GMT+7)
+ * 
  * @param {Date|number} dateOrTs - Date object or Unix timestamp (seconds)
- * @returns {Date} Date object in GMT+7
+ * @returns {Date} Date object shifted for GMT+7 date extraction using UTC methods
  */
 export function getDateInGMT7(dateOrTs) {
   const ms = typeof dateOrTs === "number" ? dateOrTs * 1000 : dateOrTs.getTime();
-  // Create a new date that represents the GMT+7 time
+  // Shift forward by GMT+7 offset so UTC methods return GMT+7 date/time components
   return new Date(ms + GMT7_OFFSET_MS);
 }
 
@@ -84,28 +94,39 @@ export function isSameDayGMT7(ts1, ts2) {
 
 /**
  * Lấy timestamp bắt đầu ngày (00:00:00) theo GMT+7
+ * 
+ * This calculates the Unix timestamp for 00:00:00 in GMT+7 timezone.
+ * The algorithm:
+ * 1. Get the date components in GMT+7 using getDateInGMT7()
+ * 2. Create a UTC timestamp for 00:00:00 of that day
+ * 3. Subtract GMT+7 offset to convert back to actual Unix timestamp
+ * 
  * @param {Date|number} dateOrTs - Date object or Unix timestamp (seconds)
  * @returns {number} Unix timestamp (seconds) of start of day in GMT+7
  */
 export function getStartOfDayGMT7(dateOrTs) {
   const d = getDateInGMT7(dateOrTs);
-  // Create date at 00:00:00 UTC (which represents 00:00:00 GMT+7)
-  const startUTC = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 0, 0, 0, 0);
-  // Subtract GMT+7 offset to get actual Unix timestamp
-  return Math.floor((startUTC - GMT7_OFFSET_MS) / 1000);
+  // Get the GMT+7 date components, create midnight UTC for that date
+  const midnightUTC = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 0, 0, 0, 0);
+  // Subtract offset to get actual Unix timestamp for midnight GMT+7
+  return Math.floor((midnightUTC - GMT7_OFFSET_MS) / 1000);
 }
 
 /**
  * Lấy timestamp kết thúc ngày (23:59:59) theo GMT+7
+ * 
+ * This calculates the Unix timestamp for 23:59:59 in GMT+7 timezone.
+ * See getStartOfDayGMT7() for algorithm explanation.
+ * 
  * @param {Date|number} dateOrTs - Date object or Unix timestamp (seconds)
  * @returns {number} Unix timestamp (seconds) of end of day in GMT+7
  */
 export function getEndOfDayGMT7(dateOrTs) {
   const d = getDateInGMT7(dateOrTs);
-  // Create date at 23:59:59 UTC (which represents 23:59:59 GMT+7)
-  const endUTC = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 23, 59, 59, 999);
-  // Subtract GMT+7 offset to get actual Unix timestamp
-  return Math.floor((endUTC - GMT7_OFFSET_MS) / 1000);
+  // Get the GMT+7 date components, create 23:59:59 UTC for that date
+  const endOfDayUTC = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 23, 59, 59, 999);
+  // Subtract offset to get actual Unix timestamp for end of day GMT+7
+  return Math.floor((endOfDayUTC - GMT7_OFFSET_MS) / 1000);
 }
 
 /**

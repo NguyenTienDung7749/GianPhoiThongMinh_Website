@@ -149,7 +149,7 @@ export function calcRetractTimeForDay(dayLogs, dayStartSec, dayEndSec, initialSt
 
 /**
  * Tính tổng thời gian phơi (OUT) trong danh sách log (LEGACY - for backward compatibility)
- * WARNING: This function has bugs for past days - use calcDryingTimeForDay instead
+ * @deprecated Use calcDryingTimeForDay instead - this function has bugs for past days
  * @param {Array} logList - Danh sách log
  * @param {number} nowSec - Thời gian hiện tại (giây)
  * @returns {number} Tổng thời gian phơi (giây)
@@ -180,7 +180,7 @@ export function calcDryingTime(logList, nowSec) {
 
 /**
  * Tính tổng thời gian thu (IN) trong danh sách log (LEGACY - for backward compatibility)
- * WARNING: This function has bugs for past days - use calcRetractTimeForDay instead
+ * @deprecated Use calcRetractTimeForDay instead - this function has bugs for past days
  * @param {Array} logList - Danh sách log
  * @param {number} nowSec - Thời gian hiện tại (giây)
  * @returns {number} Tổng thời gian thu (giây)

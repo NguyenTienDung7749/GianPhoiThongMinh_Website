@@ -17,7 +17,6 @@
   position: absolute;
   width: 80px;
   height: 200px;
-  animation: sting-float 4s ease-in-out infinite;
   filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.6));
 }
 
@@ -30,14 +29,12 @@
 .sting-bottle-left {
   left: 5%;
   bottom: 10%;
-  animation-delay: 0s;
   transform: rotate(-10deg);
 }
 
 .sting-bottle-right {
   right: 5%;
   bottom: 15%;
-  animation-delay: 1.5s;
   transform: rotate(10deg);
 }
 
@@ -45,38 +42,54 @@
   left: 50%;
   bottom: 5%;
   transform: translateX(-50%) scale(0.7);
-  animation-delay: 0.8s;
   opacity: 0.4;
   z-index: 1;
 }
 
 /* ========== FLOATING ANIMATION ========== */
-@keyframes sting-float {
+/* Separate keyframes for different bottles for better browser compatibility */
+@keyframes sting-float-left {
   0%, 100% {
-    transform: translateY(0) rotate(var(--rotate, 0deg));
+    transform: translateY(0) rotate(-10deg);
   }
   25% {
-    transform: translateY(-15px) rotate(calc(var(--rotate, 0deg) + 3deg));
+    transform: translateY(-15px) rotate(-7deg);
   }
   50% {
-    transform: translateY(-25px) rotate(var(--rotate, 0deg));
+    transform: translateY(-25px) rotate(-10deg);
   }
   75% {
-    transform: translateY(-15px) rotate(calc(var(--rotate, 0deg) - 3deg));
+    transform: translateY(-15px) rotate(-13deg);
+  }
+}
+
+@keyframes sting-float-right {
+  0%, 100% {
+    transform: translateY(0) rotate(10deg);
+  }
+  25% {
+    transform: translateY(-15px) rotate(13deg);
+  }
+  50% {
+    transform: translateY(-25px) rotate(10deg);
+  }
+  75% {
+    transform: translateY(-15px) rotate(7deg);
   }
 }
 
 .sting-bottle-left {
-  --rotate: -10deg;
+  animation: sting-float-left 4s ease-in-out infinite;
 }
 
 .sting-bottle-right {
-  --rotate: 10deg;
+  animation: sting-float-right 4s ease-in-out infinite;
+  animation-delay: 1.5s;
 }
 
 .sting-bottle-back {
-  --rotate: 0deg;
   animation: sting-float-back 5s ease-in-out infinite;
+  animation-delay: 0.8s;
 }
 
 @keyframes sting-float-back {
