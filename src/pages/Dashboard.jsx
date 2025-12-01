@@ -3,34 +3,56 @@ import { useState } from "react";
 import { useRealtimeStatus } from "../hooks/useRealtimeStatus";
 import { useHistory } from "../hooks/useHistory";
 import { useDailyStats } from "../hooks/useDailyStats";
+import { usePing } from "../hooks/usePing";
+import { useCommandTracking } from "../hooks/useCommandTracking";
 import { formatDuration } from "../utils/calcDuration";
 import { formatMode, formatState } from "../utils/formatTime";
 
 import StatusCard from "../components/StatusCard";
 import FireButton from "../components/FireButton";
 import LoadingHellfire from "../components/LoadingHellfire";
+import Esp32StatusBadge from "../components/Esp32StatusBadge";
+import PingIndicator from "../components/PingIndicator";
+import Toast from "../components/Toast";
 
 // Check if we're in demo mode (no Firebase config)
 const isDemoMode = !import.meta.env.VITE_FIREBASE_DATABASE_URL;
 
 export function Dashboard() {
-  const { sensor, system: initialSystem, loading } = useRealtimeStatus();
+  const { sensor, system: initialSystem, loading, esp32Status } = useRealtimeStatus();
   const { logs } = useHistory();
   const { todayStats } = useDailyStats(logs);
+  const { latencyMs, latencyStatus } = usePing();
   
   // Local state for demo mode
   const [demoSystem, setDemoSystem] = useState(initialSystem);
   const system = isDemoMode ? demoSystem : initialSystem;
+  
+  // Command tracking for timeout warnings
+  const { sendTrackedCommand, commandWarning, clearWarning } = useCommandTracking(system, logs);
 
   if (loading) {
     return <LoadingHellfire />;
   }
 
   const isManual = system.mode === "manual";
+  const isEsp32Online = esp32Status.online;
   const lightText = sensor.light ? "Sáng" : "Tối";
   const rainText = sensor.rain ? "Có mưa" : "Không mưa";
+  
+  // Disable controls when ESP32 is offline or not in manual mode
+  const controlsDisabled = !isManual || !isEsp32Online;
+  const modeButtonDisabled = !isEsp32Online;
+  
+  // Tooltip for disabled controls
+  const disabledTooltip = !isEsp32Online 
+    ? "Không thể điều khiển – ESP32 hiện không gửi dữ liệu"
+    : !isManual 
+    ? "Chuyển sang chế độ Thủ công để điều khiển"
+    : undefined;
 
   const handleToggleMode = async () => {
+    if (!isEsp32Online) return;
     const newMode = system.mode === "auto" ? "manual" : "auto";
     if (isDemoMode) {
       setDemoSystem(prev => ({ ...prev, mode: newMode }));
@@ -41,18 +63,29 @@ export function Dashboard() {
   };
 
   const handleCommand = async (cmd) => {
-    if (!isManual) return;
+    if (controlsDisabled) return;
     if (isDemoMode) {
       const stateMap = { out: "out", in: "in", stop: "idle" };
       setDemoSystem(prev => ({ ...prev, command: cmd, state: stateMap[cmd] || prev.state }));
     } else {
       const { sendCommand } = await import("../firebase/rtdb");
-      sendCommand(cmd);
+      // Use tracked command to detect timeouts
+      sendTrackedCommand(cmd, sendCommand);
     }
   };
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
+      {/* Toast notification for command warnings */}
+      {commandWarning && (
+        <Toast 
+          message={commandWarning.message} 
+          type="warning" 
+          onClose={clearWarning}
+          duration={8000}
+        />
+      )}
+      
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-lava-orange animate-glow mb-2">
@@ -65,9 +98,16 @@ export function Dashboard() {
 
       {/* Sensor Cards */}
       <section className="mb-8">
-        <h2 className="text-xl font-semibold text-lava-yellow mb-4 flex items-center gap-2">
-          <span className="text-2xl">📡</span> Thông Tin Cảm Biến
-        </h2>
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <h2 className="text-xl font-semibold text-lava-yellow flex items-center gap-2">
+            <span className="text-2xl">📡</span> Thông Tin Cảm Biến
+          </h2>
+          {/* ESP32 Status Badge and Ping Indicator */}
+          <div className="flex flex-wrap items-center gap-3">
+            <Esp32StatusBadge online={isEsp32Online} />
+            <PingIndicator latencyMs={latencyMs} latencyStatus={latencyStatus} />
+          </div>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatusCard
             icon="🌡️"
@@ -134,27 +174,30 @@ export function Dashboard() {
           <div className="flex flex-wrap gap-4">
             <FireButton
               onClick={() => handleCommand("out")}
-              disabled={!isManual}
+              disabled={controlsDisabled}
               variant="primary"
               icon="🔥"
+              title={disabledTooltip}
             >
               Phơi Ra
             </FireButton>
 
             <FireButton
               onClick={() => handleCommand("in")}
-              disabled={!isManual}
-              variant="secondary"
+              disabled={controlsDisabled}
+              variant="success"
               icon="🌋"
+              title={disabledTooltip}
             >
               Thu Vào
             </FireButton>
 
             <FireButton
               onClick={() => handleCommand("stop")}
-              disabled={!isManual}
+              disabled={controlsDisabled}
               variant="danger"
               icon="⛔"
+              title={disabledTooltip}
             >
               Dừng
             </FireButton>
@@ -163,15 +206,21 @@ export function Dashboard() {
 
             <FireButton
               onClick={handleToggleMode}
+              disabled={modeButtonDisabled}
               variant="mode"
               icon={system.mode === "auto" ? "🎮" : "🤖"}
+              title={!isEsp32Online ? "Không thể điều khiển – ESP32 hiện không gửi dữ liệu" : undefined}
             >
               {system.mode === "auto" ? "Chuyển Thủ Công" : "Chuyển Tự Động"}
             </FireButton>
           </div>
 
-          {/* Manual mode hint */}
-          {!isManual && (
+          {/* Manual mode hint or offline warning */}
+          {!isEsp32Online ? (
+            <p className="mt-4 text-sm text-red-400 italic">
+              ⚠️ ESP32 đang offline. Không thể gửi lệnh điều khiển.
+            </p>
+          ) : !isManual && (
             <p className="mt-4 text-sm text-lava-orange/60 italic">
               💡 Chuyển sang chế độ Thủ công để điều khiển giàn phơi
             </p>

@@ -1,6 +1,6 @@
 // src/components/FireButton.jsx
 
-export function FireButton({ children, onClick, disabled = false, variant = "primary", icon, loading = false }) {
+export function FireButton({ children, onClick, disabled = false, variant = "primary", icon, loading = false, title }) {
   const variants = {
     primary: `
       bg-gradient-to-r from-lava-red to-lava-orange
@@ -27,6 +27,13 @@ export function FireButton({ children, onClick, disabled = false, variant = "pri
       shadow-fire
       text-hell-black font-bold
     `,
+    // Green button variant for "Thu Vào" (Retract) action
+    success: `
+      bg-gradient-to-r from-green-600 to-green-500
+      hover:from-green-500 hover:to-green-400
+      shadow-[0_0_20px_rgba(34,197,94,0.5)] hover:shadow-[0_0_30px_rgba(34,197,94,0.6)]
+      text-white
+    `,
   };
 
   const disabledClass = `
@@ -39,6 +46,7 @@ export function FireButton({ children, onClick, disabled = false, variant = "pri
     <button
       onClick={onClick}
       disabled={disabled || loading}
+      title={title}
       className={`
         relative overflow-hidden
         px-6 py-3 rounded-xl
