@@ -7,7 +7,7 @@
   left: 50%;
   transform: translateX(-50%);
   z-index: 20;
-  padding: 16px 40px;
+  padding: 16px 32px;
   background: linear-gradient(
     135deg,
     #ff0000 0%,
@@ -27,11 +27,11 @@
 }
 
 .promo-text {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: 900;
   color: #ffffff;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   text-shadow: 
     0 0 10px #ffcc00,
     0 0 20px #ff6600,
@@ -113,6 +113,29 @@
   height: 100%;
 }
 
+/* ========== GRADE BUBBLE STYLES ========== */
+.grade-bubble-wrapper {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grade-bubble {
+  font-size: 2.2rem;
+  font-weight: 900;
+  font-family: 'Arial Black', Arial, sans-serif;
+  padding: 12px 24px;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 50px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 0 20px rgba(255, 255, 255, 0.2),
+    inset 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
 /* ========== BOTTLE POSITIONS - TOP ========== */
 .sting-bottle-top-left {
   left: 8%;
@@ -153,6 +176,35 @@
   z-index: 1;
   animation: bottle-float-back 5s ease-in-out infinite;
   animation-delay: 0.5s;
+}
+
+/* ========== GRADE BUBBLE WRAPPER POSITION OVERRIDES ========== */
+.grade-bubble-wrapper.sting-bottle-top-left {
+  left: 5%;
+  top: 12%;
+}
+
+.grade-bubble-wrapper.sting-bottle-top-right {
+  right: 5%;
+  top: 12%;
+  left: auto;
+}
+
+.grade-bubble-wrapper.sting-bottle-left {
+  left: 3%;
+  bottom: 15%;
+}
+
+.grade-bubble-wrapper.sting-bottle-right {
+  right: 3%;
+  bottom: 18%;
+  left: auto;
+}
+
+.grade-bubble-wrapper.sting-bottle-back {
+  left: 50%;
+  bottom: 5%;
+  opacity: 0.6;
 }
 
 /* ========== BOBBING/FLOATING ANIMATIONS ========== */
@@ -423,13 +475,13 @@
 /* ========== RESPONSIVE ADJUSTMENTS ========== */
 @media (max-width: 1024px) {
   .promo-banner {
-    padding: 12px 24px;
+    padding: 12px 20px;
     top: 15px;
   }
   
   .promo-text {
-    font-size: 1.2rem;
-    letter-spacing: 1px;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
   }
   
   .sting-bottle {
@@ -451,18 +503,33 @@
     width: 130px;
     height: 280px;
   }
+  
+  .grade-bubble {
+    font-size: 2rem;
+    padding: 10px 20px;
+  }
+  
+  .grade-bubble-wrapper.sting-bottle-top-left {
+    left: 3%;
+    top: 10%;
+  }
+  
+  .grade-bubble-wrapper.sting-bottle-top-right {
+    right: 3%;
+    top: 10%;
+  }
 }
 
 @media (max-width: 768px) {
   .promo-banner {
-    padding: 10px 20px;
+    padding: 10px 16px;
     top: 10px;
-    max-width: 90%;
+    max-width: 95%;
   }
   
   .promo-text {
-    font-size: 1rem;
-    letter-spacing: 0.5px;
+    font-size: 0.85rem;
+    letter-spacing: 0;
   }
   
   .sting-bottle {
@@ -503,17 +570,47 @@
     width: 100px;
     height: 220px;
   }
+  
+  .grade-bubble {
+    font-size: 1.6rem;
+    padding: 8px 16px;
+  }
+  
+  .grade-bubble-wrapper.sting-bottle-top-left {
+    left: 2%;
+    top: 8%;
+  }
+  
+  .grade-bubble-wrapper.sting-bottle-top-right {
+    right: 2%;
+    top: 8%;
+  }
+  
+  .grade-bubble-wrapper.sting-bottle-left {
+    left: 2%;
+    bottom: 10%;
+  }
+  
+  .grade-bubble-wrapper.sting-bottle-right {
+    right: 2%;
+    bottom: 12%;
+  }
+  
+  .grade-bubble-wrapper.sting-bottle-back {
+    display: none;
+  }
 }
 
 @media (max-width: 480px) {
   .promo-banner {
-    padding: 8px 16px;
+    padding: 8px 12px;
     top: 8px;
     border-radius: 8px;
+    max-width: 98%;
   }
   
   .promo-text {
-    font-size: 0.85rem;
+    font-size: 0.7rem;
     letter-spacing: 0;
   }
   
@@ -532,6 +629,21 @@
   .sting-glow {
     width: 80px;
     height: 170px;
+  }
+  
+  .grade-bubble {
+    font-size: 1.3rem;
+    padding: 6px 12px;
+  }
+  
+  .grade-bubble-wrapper.sting-bottle-top-left,
+  .grade-bubble-wrapper.sting-bottle-top-right {
+    top: 6%;
+  }
+  
+  .grade-bubble-wrapper.sting-bottle-left,
+  .grade-bubble-wrapper.sting-bottle-right {
+    bottom: 8%;
   }
 }
 
@@ -563,7 +675,9 @@
 .sting-bottle,
 .sting-glow,
 .bubble,
-.spark {
+.spark,
+.grade-bubble,
+.grade-bubble-wrapper {
   will-change: transform, opacity;
   backface-visibility: hidden;
   transform-style: preserve-3d;
