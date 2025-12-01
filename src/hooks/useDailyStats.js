@@ -1,61 +1,71 @@
 // src/hooks/useDailyStats.js
 import { useMemo } from "react";
-import { calcDryingTime, calcRetractTime, groupLogsByDay } from "../utils/calcDuration";
-import { isSameDay } from "../utils/formatTime";
+import { 
+  getLast7DaysRange, 
+  findStateBeforeTimestamp, 
+  calcDryingTimeForDay, 
+  calcRetractTimeForDay,
+  groupLogsByDayGMT7
+} from "../utils/calcDuration";
 
 /**
- * Hook tính thống kê theo ngày
+ * Hook tính thống kê theo ngày với xử lý đúng GMT+7 và day boundaries
  * @param {Array} logs - Danh sách logs
- * @returns {Object} { todayStats, dailyStats }
+ * @returns {Object} { todayStats, dailyStats, weeklyTotal }
  */
 export function useDailyStats(logs) {
   const stats = useMemo(() => {
-    const now = new Date();
-    const nowSec = Math.floor(now.getTime() / 1000);
+    // Sort logs by timestamp ascending for proper state tracking
+    const sortedLogs = [...logs].sort((a, b) => (a.ts || 0) - (b.ts || 0));
     
-    // Lọc logs hôm nay
-    const logsToday = logs.filter((log) => {
-      if (!log.ts) return false;
-      const d = new Date(log.ts * 1000);
-      return isSameDay(d, now);
+    // Group logs by day using GMT+7
+    const groupedByDay = groupLogsByDayGMT7(sortedLogs);
+    
+    // Get the exact 7-day range
+    const last7Days = getLast7DaysRange();
+    
+    // Calculate stats for each of the 7 days
+    const dailyStats = last7Days.map((day, index) => {
+      const { key, dayStartSec, dayEndSec, dateObj } = day;
+      
+      // Get logs for this specific day
+      const dayLogs = groupedByDay[key] || [];
+      
+      // Find the initial state at the start of this day
+      // (the state from the last log before this day started)
+      const initialState = findStateBeforeTimestamp(sortedLogs, dayStartSec);
+      
+      // Calculate drying and retract time with proper boundaries
+      const dryingSec = calcDryingTimeForDay(dayLogs, dayStartSec, dayEndSec, initialState);
+      const inSec = calcRetractTimeForDay(dayLogs, dayStartSec, dayEndSec, initialState);
+      
+      return {
+        key,
+        dateObj,
+        dayStartSec,
+        dayEndSec,
+        dryingSec,
+        inSec,
+        count: dayLogs.length,
+        isToday: index === 0,
+      };
     });
     
-    // Thống kê hôm nay - tính đúng từ logs
-    const dryingTodaySec = calcDryingTime(logsToday, nowSec);
-    const inTodaySec = calcRetractTime(logsToday, nowSec);
-    
+    // Today's stats is the first entry
     const todayStats = {
-      dryingSec: dryingTodaySec,
-      inSec: inTodaySec,
-      count: logsToday.length,
+      dryingSec: dailyStats[0]?.dryingSec || 0,
+      inSec: dailyStats[0]?.inSec || 0,
+      count: dailyStats[0]?.count || 0,
     };
     
-    // Nhóm logs theo ngày
-    const groupedByDay = groupLogsByDay(logs);
+    // Calculate weekly totals
+    const weeklyTotal = {
+      dryingSec: dailyStats.reduce((sum, d) => sum + d.dryingSec, 0),
+      inSec: dailyStats.reduce((sum, d) => sum + d.inSec, 0),
+      count: dailyStats.reduce((sum, d) => sum + d.count, 0),
+    };
     
-    // Tính thống kê từng ngày
-    const dailyStats = Object.keys(groupedByDay)
-      .sort((a, b) => (a < b ? 1 : -1))
-      .map((key) => {
-        const list = groupedByDay[key];
-        if (!list.length) return null;
-        
-        const d = new Date(list[0].ts * 1000);
-        const drySec = calcDryingTime(list, nowSec);
-        const inSec = calcRetractTime(list, nowSec);
-        
-        return {
-          key,
-          dateObj: d,
-          dryingSec: drySec,
-          inSec,
-          count: list.length,
-        };
-      })
-      .filter(Boolean)
-      .slice(0, 7);
-    
-    return { todayStats, dailyStats };
+    return { todayStats, dailyStats, weeklyTotal };
   }, [logs]);
   
   return stats;

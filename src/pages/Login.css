@@ -1,0 +1,365 @@
+/* src/pages/Login.css - STING ENERGY STYLE Animation */
+
+/* ========== STING BOTTLE CONTAINER ========== */
+.sting-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+  overflow: hidden;
+}
+
+/* ========== STING BOTTLE BASE STYLES ========== */
+.sting-bottle {
+  position: absolute;
+  width: 80px;
+  height: 200px;
+  filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.6));
+}
+
+.sting-bottle svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* ========== BOTTLE POSITIONS ========== */
+.sting-bottle-left {
+  left: 5%;
+  bottom: 10%;
+  transform: rotate(-10deg);
+}
+
+.sting-bottle-right {
+  right: 5%;
+  bottom: 15%;
+  transform: rotate(10deg);
+}
+
+.sting-bottle-back {
+  left: 50%;
+  bottom: 5%;
+  transform: translateX(-50%) scale(0.7);
+  opacity: 0.4;
+  z-index: 1;
+}
+
+/* ========== FLOATING ANIMATION ========== */
+/* Separate keyframes for different bottles for better browser compatibility */
+@keyframes sting-float-left {
+  0%, 100% {
+    transform: translateY(0) rotate(-10deg);
+  }
+  25% {
+    transform: translateY(-15px) rotate(-7deg);
+  }
+  50% {
+    transform: translateY(-25px) rotate(-10deg);
+  }
+  75% {
+    transform: translateY(-15px) rotate(-13deg);
+  }
+}
+
+@keyframes sting-float-right {
+  0%, 100% {
+    transform: translateY(0) rotate(10deg);
+  }
+  25% {
+    transform: translateY(-15px) rotate(13deg);
+  }
+  50% {
+    transform: translateY(-25px) rotate(10deg);
+  }
+  75% {
+    transform: translateY(-15px) rotate(7deg);
+  }
+}
+
+.sting-bottle-left {
+  animation: sting-float-left 4s ease-in-out infinite;
+}
+
+.sting-bottle-right {
+  animation: sting-float-right 4s ease-in-out infinite;
+  animation-delay: 1.5s;
+}
+
+.sting-bottle-back {
+  animation: sting-float-back 5s ease-in-out infinite;
+  animation-delay: 0.8s;
+}
+
+@keyframes sting-float-back {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0) scale(0.7);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-30px) scale(0.75);
+  }
+}
+
+/* ========== RED FIRE GLOW EFFECT ========== */
+.sting-glow {
+  position: absolute;
+  width: 120px;
+  height: 250px;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 0, 0, 0.4) 0%,
+    rgba(255, 102, 0, 0.2) 40%,
+    rgba(255, 204, 0, 0.1) 60%,
+    transparent 80%
+  );
+  animation: glow-pulse 2s ease-in-out infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.sting-bottle-left .sting-glow {
+  left: -20px;
+  top: -25px;
+}
+
+.sting-bottle-right .sting-glow {
+  left: -20px;
+  top: -25px;
+  animation-delay: 0.5s;
+}
+
+.sting-bottle-back .sting-glow {
+  left: -20px;
+  top: -25px;
+  animation-delay: 1s;
+  opacity: 0.5;
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+/* ========== BUBBLES INSIDE BOTTLE ========== */
+.sting-bubbles {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  width: 40px;
+  height: 100px;
+  transform: translateX(-50%);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.bubble {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 0.8),
+    rgba(255, 204, 0, 0.4) 50%,
+    transparent
+  );
+  border-radius: 50%;
+  animation: bubble-rise 3s ease-in-out infinite;
+}
+
+.bubble:nth-child(1) {
+  left: 20%;
+  animation-delay: 0s;
+}
+
+.bubble:nth-child(2) {
+  left: 50%;
+  animation-delay: 0.8s;
+  width: 4px;
+  height: 4px;
+}
+
+.bubble:nth-child(3) {
+  left: 75%;
+  animation-delay: 1.6s;
+  width: 5px;
+  height: 5px;
+}
+
+.bubble:nth-child(4) {
+  left: 35%;
+  animation-delay: 2.4s;
+  width: 3px;
+  height: 3px;
+}
+
+.bubble:nth-child(5) {
+  left: 60%;
+  animation-delay: 3.2s;
+  width: 5px;
+  height: 5px;
+}
+
+@keyframes bubble-rise {
+  0% {
+    transform: translateY(0) scale(0.5);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.8;
+  }
+  80% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-90px) scale(0.3);
+    opacity: 0;
+  }
+}
+
+/* ========== ENERGY SPARK EFFECTS ========== */
+.energy-sparks {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 4;
+  overflow: hidden;
+}
+
+.spark {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: radial-gradient(
+    circle,
+    #ffcc00 0%,
+    #ff6600 50%,
+    #ff0000 100%
+  );
+  border-radius: 50%;
+  animation: spark-fly 4s linear infinite;
+  opacity: 0;
+}
+
+.spark:nth-child(1) {
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.spark:nth-child(2) {
+  left: 25%;
+  animation-delay: 0.7s;
+}
+
+.spark:nth-child(3) {
+  left: 40%;
+  animation-delay: 1.4s;
+}
+
+.spark:nth-child(4) {
+  left: 55%;
+  animation-delay: 2.1s;
+}
+
+.spark:nth-child(5) {
+  left: 70%;
+  animation-delay: 2.8s;
+}
+
+.spark:nth-child(6) {
+  left: 85%;
+  animation-delay: 3.5s;
+}
+
+@keyframes spark-fly {
+  0% {
+    transform: translateY(100vh) scale(0.5);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-20vh) scale(0.2);
+    opacity: 0;
+  }
+}
+
+/* ========== RESPONSIVE ADJUSTMENTS ========== */
+@media (max-width: 768px) {
+  .sting-bottle {
+    width: 60px;
+    height: 150px;
+  }
+  
+  .sting-bottle-left {
+    left: 2%;
+    bottom: 5%;
+  }
+  
+  .sting-bottle-right {
+    right: 2%;
+    bottom: 8%;
+  }
+  
+  .sting-bottle-back {
+    display: none;
+  }
+  
+  .sting-glow {
+    width: 90px;
+    height: 190px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sting-bottle {
+    width: 50px;
+    height: 120px;
+  }
+  
+  .sting-glow {
+    width: 70px;
+    height: 150px;
+  }
+}
+
+/* ========== DARK MODE ENHANCEMENT ========== */
+@media (prefers-color-scheme: dark) {
+  .sting-bottle {
+    filter: drop-shadow(0 0 25px rgba(255, 0, 0, 0.7));
+  }
+  
+  .sting-glow {
+    background: radial-gradient(
+      ellipse at center,
+      rgba(255, 0, 0, 0.5) 0%,
+      rgba(255, 102, 0, 0.3) 40%,
+      rgba(255, 204, 0, 0.15) 60%,
+      transparent 80%
+    );
+  }
+}
+
+/* ========== PERFORMANCE OPTIMIZATION ========== */
+.sting-bottle,
+.sting-glow,
+.bubble,
+.spark {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
