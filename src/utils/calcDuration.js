@@ -66,10 +66,8 @@ export function findStateBeforeTimestamp(allLogs, beforeTs) {
  */
 export function calcDryingTimeForDay(dayLogs, dayStartSec, dayEndSec, initialState) {
   if (!dayLogs || dayLogs.length === 0) {
-    // No logs for this day - check if initial state was "out"
-    if (initialState === "out") {
-      return Math.max(0, dayEndSec - dayStartSec);
-    }
+    // No logs for this day means no activity (system not operating)
+    // Should return 0 regardless of initialState
     return 0;
   }
   
@@ -113,10 +111,8 @@ export function calcDryingTimeForDay(dayLogs, dayStartSec, dayEndSec, initialSta
  */
 export function calcRetractTimeForDay(dayLogs, dayStartSec, dayEndSec, initialState) {
   if (!dayLogs || dayLogs.length === 0) {
-    // No logs for this day - check if initial state was "in"
-    if (initialState === "in") {
-      return Math.max(0, dayEndSec - dayStartSec);
-    }
+    // No logs for this day means no activity (system not operating)
+    // Should return 0 regardless of initialState
     return 0;
   }
   
