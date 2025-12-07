@@ -5,7 +5,16 @@ import { useState, useEffect, useCallback } from "react";
 const isDemoMode = !import.meta.env.VITE_FIREBASE_DATABASE_URL;
 
 // ESP32 offline detection timeout in milliseconds
-const ESP32_OFFLINE_TIMEOUT_MS = 10000;
+const ESP32_OFFLINE_TIMEOUT_MS = 30000; // 30 seconds
+
+// Grace period after component mount (don't show offline immediately)
+const INITIAL_GRACE_PERIOD_MS = 15000; // 15 seconds
+
+// Number of consecutive failed checks before marking as offline
+const OFFLINE_CHECK_THRESHOLD = 3;
+
+// Check interval in milliseconds
+const STATUS_CHECK_INTERVAL_MS = 5000; // 5 seconds
 
 /**
  * Hook lấy trạng thái realtime từ Firebase
@@ -31,15 +40,19 @@ export function useRealtimeStatus() {
   const [esp32Status, setEsp32Status] = useState({
     online: isDemoMode, // In demo mode, always show as online
     lastUpdateAt: isDemoMode ? Date.now() : null,
+    consecutiveFailures: 0, // Track consecutive failed checks for debouncing
+    mountedAt: Date.now(), // Track when component mounted for grace period
   });
 
   // Update ESP32 status when sensor data is received
   const handleSensorUpdate = useCallback((sensorData) => {
     setSensor(sensorData);
-    setEsp32Status({
+    setEsp32Status((prev) => ({
+      ...prev,
       online: true,
       lastUpdateAt: Date.now(),
-    });
+      consecutiveFailures: 0, // Reset failure counter on successful update
+    }));
   }, []);
 
   useEffect(() => {
@@ -87,20 +100,48 @@ export function useRealtimeStatus() {
     };
   }, [handleSensorUpdate]);
 
-  // Check ESP32 online status every second (10s timeout for offline detection)
+  // Check ESP32 online status every 5 seconds (30s timeout + debounce for offline detection)
   useEffect(() => {
     if (isDemoMode) return;
 
     const checkInterval = setInterval(() => {
       setEsp32Status((prev) => {
+        // If no data received yet, check if we're still in grace period
         if (!prev.lastUpdateAt) {
+          const timeSinceMounted = Date.now() - prev.mountedAt;
+          // During grace period, stay online
+          if (timeSinceMounted <= INITIAL_GRACE_PERIOD_MS) {
+            return { ...prev, online: true };
+          }
+          // After grace period, mark as offline
           return { ...prev, online: false };
         }
+
         const timeSinceLastUpdate = Date.now() - prev.lastUpdateAt;
-        const isOnline = timeSinceLastUpdate <= ESP32_OFFLINE_TIMEOUT_MS;
-        return { ...prev, online: isOnline };
+        const isCurrentlyReceivingData = timeSinceLastUpdate <= ESP32_OFFLINE_TIMEOUT_MS;
+
+        // If receiving data, reset failure counter and mark online
+        if (isCurrentlyReceivingData) {
+          return {
+            ...prev,
+            online: true,
+            consecutiveFailures: 0,
+          };
+        }
+
+        // Not receiving data - increment failure counter
+        const newFailureCount = prev.consecutiveFailures + 1;
+
+        // Only mark as offline after consecutive failures exceed threshold
+        const shouldBeOffline = newFailureCount >= OFFLINE_CHECK_THRESHOLD;
+
+        return {
+          ...prev,
+          online: !shouldBeOffline,
+          consecutiveFailures: newFailureCount,
+        };
       });
-    }, 1000);
+    }, STATUS_CHECK_INTERVAL_MS);
 
     return () => clearInterval(checkInterval);
   }, []);

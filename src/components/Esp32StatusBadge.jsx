@@ -10,10 +10,10 @@ export function Esp32StatusBadge({ online }) {
     <span
       className={`
         inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium
-        transition-all duration-300
+        transition-all duration-500
         ${online
           ? "bg-green-900/30 text-green-400 border border-green-700/50 shadow-[0_0_10px_rgba(34,197,94,0.3)]"
-          : "bg-red-900/30 text-red-400 border border-red-700/50 shadow-[0_0_10px_rgba(239,68,68,0.3)] animate-pulse"
+          : "bg-red-900/30 text-red-400 border border-red-700/50 shadow-[0_0_10px_rgba(239,68,68,0.3)]"
         }
       `}
     >
